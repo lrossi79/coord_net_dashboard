@@ -18,7 +18,7 @@ net$time <- as_datetime(net$time)
 
 
 
-shinyUI( fluidPage(
+shinyUI( fluidPage(theme = "bootstrap.css",
         titlePanel("Network of coordinated behaviour"),
         sidebarLayout(
             sidebarPanel(
