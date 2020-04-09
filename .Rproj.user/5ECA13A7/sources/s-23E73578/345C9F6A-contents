@@ -31,7 +31,7 @@ shinyServer(function(input, output) {
 
     output$network <- renderVisNetwork({
         
-        nodes <- data.frame(id=V(g2())$name, label=V(g2())$account.name)
+        nodes <- data.frame(id=V(g2())$name, label=V(g2())$account.name, group=V(g2())$component)
         
         edges <- as.data.frame(as_edgelist(g2()))
         edges$weight <- E(g2())$weight

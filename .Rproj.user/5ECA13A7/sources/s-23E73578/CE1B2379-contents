@@ -1,0 +1,44 @@
+g <- read.graph("../../../Desktop/New folder (2)/output_graph.graphml",format = "graphml")
+
+#head(E(g)$t_coord_share)
+
+#E(g)$coord <- strsplit(E(g)$t_coord_share,";")
+
+
+
+
+library(visNetwork)
+
+nodes <- as.data.frame(V(g)$name)
+nodes$name <- nodes$`V(g)$name`
+nodes_details <- output[[3]]
+nodes <- full_join(x = nodes,y =nodes_details ,by="name")
+nodes <- nodes[c(1,2,3,4,10,11)]
+colnames(nodes) <- c("id", "label","shares","avg.account.subscriberCount","degree","component")
+
+
+edges <- as.data.frame(as_edgelist(g))
+edges$weight <- E(g)$weight
+colnames(edges) <- c("from", "to", "width")
+
+vis_net <- visNetwork(nodes, edges,width = "100%") %>%
+visIgraphLayout() %>%
+  visNodes(
+    shape = "dot",
+    color = list(
+      background = "#0085AF",
+      border = "#013848",
+      highlight = "#FF8000"
+    ),
+    shadow = list(enabled = TRUE, size = 10)
+  ) %>%
+  visEdges(
+    shadow = FALSE,
+    color = list(color = "#0085AF", highlight = "#C62F4B")
+  ) %>%
+  visOptions(highlightNearest = list(enabled = T, degree = 1, hover = T),
+             selectedBy = "component") %>%
+  visLayout(randomSeed = 11)
+
+
+visSave(vis_net, file = "network.html", background = "white")
