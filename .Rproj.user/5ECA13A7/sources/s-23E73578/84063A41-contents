@@ -31,7 +31,7 @@ shinyUI( fluidPage(
                             "Min Degree:",
                             min = 1,
                             max = max(degree(g)),
-                            value = 1)
+                            value = 0)
             ),
       
         mainPanel(visNetworkOutput("network"),width = 12)

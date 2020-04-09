@@ -25,7 +25,7 @@ shinyServer(function(input, output) {
     g2 = reactive({
         net2 <- subset(net, time >= as.character(input$daterange4[1]) & time <= as.character(input$daterange4[2]))
         g3 <- subgraph.edges(g,eids = net2$eid,delete.vertices = T)
-        induced_subgraph(graph = g3,vids = V(g3)[V(g3)$degree > input$degree])
+        induced_subgraph(graph = g3,vids = V(g3)[V(g3)$degree >= input$degree])
     })
     
 
