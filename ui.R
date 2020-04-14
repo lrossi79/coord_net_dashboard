@@ -4,6 +4,7 @@ library(igraph)
 library(reshape2)
 library(lubridate)
 library(readr)
+library(ggplot2)
 
 g <-  readRDS("data/hcn.rds")
 
@@ -15,7 +16,10 @@ net <- net[c(2,1)]
 names(net) <- c("eid","time")
 net$time <- as_datetime(net$time)
 
-
+t <- net
+t$time <- as.Date(t$time)
+t <- t %>% dplyr::group_by(time) %>%
+      dplyr::summarize(GroupCount = n())
 
 
 shinyUI( fluidPage(theme = "bootstrap.css",
@@ -34,7 +38,9 @@ shinyUI( fluidPage(theme = "bootstrap.css",
                             value = 0)
             ),
       
-        mainPanel(visNetworkOutput("network"),width = 12)
+        mainPanel(visNetworkOutput("network"),
+                  plotOutput(outputId = "barplot"),
+                  width = 12)
     )))
 
 

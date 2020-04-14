@@ -4,6 +4,8 @@ library(igraph)
 library(reshape2)
 library(lubridate)
 library(readr)
+library(dplyr)
+library(ggplot2)
 
 
 g <-  readRDS("data/hcn.rds")
@@ -17,6 +19,12 @@ net <- net[c(2,1)]
 names(net) <- c("eid","time")
 net$time <- as_datetime(net$time)
 
+t <- net
+t$time <- as.Date(t$time)
+t <- t %>% dplyr::group_by(time) %>%
+    dplyr::summarize(GroupCount = n())
+
+
 
 
 shinyServer(function(input, output) {
@@ -29,6 +37,10 @@ shinyServer(function(input, output) {
     })
     
 
+    t3= reactive({
+        t2 <- subset(t,time >= as.character(input$daterange4[1]) & time <= as.character(input$daterange4[2]))
+        })    
+    
     output$network <- renderVisNetwork({
         
         nodes <- data.frame(id=V(g2())$name, label=V(g2())$account.name, group=V(g2())$component)
@@ -41,6 +53,8 @@ shinyServer(function(input, output) {
             visIgraphLayout()
     })
     
+    
+    output$barplot <- renderPlot({ggplot(t3(),mapping = (aes(x = time,y = GroupCount)))+geom_line()+theme_light()})
     
     
     
