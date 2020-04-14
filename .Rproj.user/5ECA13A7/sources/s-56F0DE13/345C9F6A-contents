@@ -8,6 +8,7 @@ library(dplyr)
 library(ggplot2)
 
 
+#runGitHub( "coord_net_dashboard", "lrossi79")
 g <-  readRDS("data/hcn.rds")
 
 

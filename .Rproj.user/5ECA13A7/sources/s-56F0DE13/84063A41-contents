@@ -23,10 +23,11 @@ t <- t %>% dplyr::group_by(time) %>%
 
 
 shinyUI( fluidPage(theme = "bootstrap.css",
-        titlePanel("Network of coordinated behaviour"),
+         titlePanel("Network of coordinated behaviour"),
         sidebarLayout(
             sidebarPanel(
-                dateRangeInput("daterange4", "Date range:",
+              img(src='logo-coornet.png', align = "left", width="70%"),
+                dateRangeInput("daterange4", "",
                                start = min(net$time),
                                end = max(net$time)),
 #                               min= min(net$time),
@@ -38,9 +39,14 @@ shinyUI( fluidPage(theme = "bootstrap.css",
                             value = 0)
             ),
       
-        mainPanel(visNetworkOutput("network"),
-                  plotOutput(outputId = "barplot"),
-                  width = 12)
+        mainPanel(
+          
+          tabsetPanel(type = "tabs",
+                      tabPanel( "Network",visNetworkOutput("network")),
+                      tabPanel("Timeline", plotOutput(outputId = "barplot"))
+          )
+          
+                           )
     )))
 
 

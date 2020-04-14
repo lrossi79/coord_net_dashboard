@@ -5,15 +5,15 @@
     "dirty" : false,
     "encoding" : "UTF-8",
     "folds" : "",
-    "hash" : "3999335829",
+    "hash" : "1969026693",
     "id" : "345C9F6A",
-    "lastKnownWriteTime" : 1586877912,
-    "last_content_update" : 1586877912182,
+    "lastKnownWriteTime" : 1586878373,
+    "last_content_update" : 1586878374010,
     "path" : "~/GitHub/coord_net_dashboard/server.R",
     "project_path" : "server.R",
     "properties" : {
-        "cursorPosition" : "56,86",
-        "scrollLine" : "36"
+        "cursorPosition" : "10,1",
+        "scrollLine" : "0"
     },
     "read_only" : false,
     "read_only_alternatives" : [
