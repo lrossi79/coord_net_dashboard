@@ -1,4 +1,4 @@
-
+devtools::install_github("dreamRs/shinyWidgets")
 
 library(shiny)
 library(visNetwork)
@@ -8,7 +8,7 @@ library(lubridate)
 library(readr)
 library(dplyr)
 library(ggplot2)
-
+library(shinyWidgets)
 
 #runGitHub( "coord_net_dashboard", "lrossi79")
 g <-  readRDS("data/hcn.rds")
@@ -38,13 +38,15 @@ ui <- fluidPage(theme = "bootstrap.css",
                          dateRangeInput("daterange4", "",
                                         start = min(net$time),
                                         end = max(net$time)),
-                         #                               min= min(net$time),
-                         #                               max=max(net$time)),
+                         
                          sliderInput("degree",
                                      "Min Degree:",
                                      min = 1,
                                      max = max(degree(g)),
                                      value = 0)
+                         #pickerInput("component","Componente", choices=unique(V(g)$component), options = list(`actions-box` = TRUE),multiple = T)
+                          #hr(),
+                         #helpText("Select a coordinated component")
                      ),
                      
                      mainPanel(
@@ -64,8 +66,8 @@ server <- function(input, output) {
     g2 = reactive({
         net2 <- subset(net, time >= as.character(input$daterange4[1]) & time <= as.character(input$daterange4[2]))
         g3 <- subgraph.edges(g,eids = net2$eid,delete.vertices = T)
-        induced_subgraph(graph = g3,vids = V(g3)[V(g3)$degree >= input$degree])
-    })
+        induced_subgraph(graph = g3,vids = V(g3)[V(g3)$degree >= input$degree & V(g3)$component == input$component])
+        })
     
     
     t3= reactive({
