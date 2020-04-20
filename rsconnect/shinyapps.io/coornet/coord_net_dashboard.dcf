@@ -1,0 +1,10 @@
+name: coord_net_dashboard
+title:
+username:
+account: coornet
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 2122099
+bundleId: 3017319
+url: https://coornet.shinyapps.io/coord_net_dashboard/
+when: 1586961558.26957

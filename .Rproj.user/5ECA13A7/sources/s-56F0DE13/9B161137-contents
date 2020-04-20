@@ -1,1 +1,0 @@
-data.frame(component=V(g)$component, name=V(g)$account.name, verified=V(g)$account.verified,degree=V(g)$degree)

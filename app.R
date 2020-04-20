@@ -12,7 +12,11 @@ library(DT)
 
 
 #runGitHub( "coord_net_dashboard", "lrossi79")
-g <-  readRDS("data/hcn.rds")
+
+#data <-  read_rds("D:/cononavirus phase2/ct_shares.df.rds.df")
+data <-  readRDS("data/output.rds")
+g <- data[[2]]
+V(g)$selected <- 0
 
 
 
@@ -29,8 +33,9 @@ t <- t %>% dplyr::group_by(time) %>%
     dplyr::summarize(GroupCount = n())
 
 page_details <- data.frame(component=V(g)$component, name=V(g)$account.name, verified=V(g)$account.verified,degree=V(g)$degree)
+shares <- as.data.frame(data[[1]])
 
-
+url_shared <- unique(shares$title[shares$account.name %in% V(g)$account.name])
 
 # Define UI for application that draws a histogram
 ui <- fluidPage(theme = "bootstrap.css",
@@ -40,20 +45,25 @@ ui <- fluidPage(theme = "bootstrap.css",
                          img(src='logo-coornet.png', align = "left", width="70%"),
                          dateRangeInput("daterange4", "",
                                         start = min(net$time),
-                                        end = max(net$time)),
-                         #                               min= min(net$time),
-                         #                               max=max(net$time)),
-                         sliderInput("degree",
-                                     "Min Degree:",
-                                     min = 1,
-                                     max = max(degree(g)),
-                                     value = 0),
-                         selectInput("component",
-                                     "Select Component:",
-                                     choices = c("All",unique(V(g)$component)),
+                                        end = max(net$time)
+                                        ),
+                             
+                          sliderInput("degree",
+                                      "Min Degree:",
+                                      min = 1,
+                                      max = max(degree(g)),
+                                      value = 0),
+                         #selectInput("component",
+                         #            "Select Component:",
+                         #            choices = c("All",unique(V(g)$component)),
+                         #            selected = "All",
+                         #            multiple = F),
+                         selectInput('news', 
+                                     'Select News',
+                                     choices = c("All", url_shared),
                                      selected = "All",
-                                     multiple = F
-                         )                      
+                                     selectize=FALSE)
+                         
                          ),
                      
                      mainPanel(
@@ -72,14 +82,13 @@ server <- function(input, output) {
     
     
     g2 = reactive({
+        selected <- unique(shares$account.name[shares$title == input$news & shares$account.name %in% V(g)$account.name])
         net2 <- subset(net, time >= as.character(input$daterange4[1]) & time <= as.character(input$daterange4[2]))
         g3 <- subgraph.edges(g,eids = net2$eid,delete.vertices = T)
-        if(input$component=="All"){induced_subgraph(graph = g3,vids = V(g3)[V(g3)$degree >= input$degree])}
-        else if(input$component!="All"){induced_subgraph(graph = g3,vids = V(g3)[V(g3)$degree >= input$degree & V(g3)$component == input$component ])}
-          
-        
-        
-        
+        #if(input$component=="All"){induced_subgraph(graph = g3,vids = V(g3)[V(g3)$degree >= input$degree])}
+        #else if(input$component!="All"){induced_subgraph(graph = g3,vids = V(g3)[V(g3)$degree >= input$degree & V(g3)$component == input$component ])}
+        if(input$news == "All"){induced_subgraph(graph = g3,vids = V(g3)[V(g3)$degree >= input$degree])}
+        else if(input$news != "All"){induced_subgraph(graph = g3,vids = V(g3)$name[V(g3)$account.name %in% selected])}
         
         
     })
@@ -91,10 +100,19 @@ server <- function(input, output) {
     
 
     
+
+    
+    
+    
+    
+   
+    
+    
+    
+    
     output$network <- renderVisNetwork({
         
         nodes <- data.frame(id=V(g2())$name, label=V(g2())$account.name, group=V(g2())$component)
-        
         edges <- as.data.frame(as_edgelist(g2()))
         edges$weight <- E(g2())$weight
         colnames(edges) <- c("from", "to", "width")

@@ -1,0 +1,10 @@
+#################### CooRnet ##################### 
+estimate_coord_interval script executed on: 2020-04-19 14:18 CEST
+
+estimate_coord_interval script executed on: 2020-04-19 14:18 CEST
+
+
+q (quantile of quickest URLs to be filtered): 0.1
+p (percentage of total shares to be reached): 0.5
+coordination interval from estimate_coord_interval: 1 secs
+Warning: with the specified parameters p and q the median was 0 secs. The coordination interval has been automatically set to 1 secs

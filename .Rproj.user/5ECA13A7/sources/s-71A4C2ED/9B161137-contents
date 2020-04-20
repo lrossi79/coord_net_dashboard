@@ -1,0 +1,22 @@
+data.frame(component=V(g)$component, name=V(g)$account.name, verified=V(g)$account.verified,degree=V(g)$degree)
+
+url_shared <- unique(data[[1]]$expanded)
+
+
+selected <- unique(data[[1]]$account.name[data[[1]]$expanded == url_shared[1:10]])
+
+
+
+
+
+nodes <- data.frame(id=V(g2)$name, label=V(g2)$account.name, group=V(g2)$component)
+
+nodes$group[nodes$label %in% selected] <- 1
+
+edges <- as.data.frame(as_edgelist(g2))
+edges$weight <- E(g2)$weight
+colnames(edges) <- c("from", "to", "width")
+
+visNetwork(nodes, edges) %>%
+  
+  visIgraphLayout() 
