@@ -1,0 +1,7 @@
+library(rsconnect)
+
+rsconnect::setAccountInfo(name='coornet',
+                          token='98EF6CC1E0420600DE80CB60D543707B',
+                          secret='Z37PVtbJ8DcBDfwrT/KdQdO1kI5nxLOV2n6V6pSK')
+
+rsconnect::deployApp(appDir = "../coord_net_dashboard")

@@ -7,17 +7,26 @@ library(reshape2)
 library(lubridate)
 library(readr)
 library(dplyr)
+library(tidyr)
 library(ggplot2)
 library(DT)
+library(stringr)
+library(CooRnet)
+#library(googledrive)
 
 
 #runGitHub( "coord_net_dashboard", "lrossi79")
 
-#data <-  read_rds("D:/cononavirus phase2/ct_shares.df.rds.df")
+
+
 data <-  readRDS("data/output.rds")
 g <- data[[2]]
-V(g)$selected <- 0
-
+V(g)$color <- "gray"
+top_url <- get_top_coord_urls(data)
+top_url_tab <- top_url
+top_url$account.name <- strsplit(top_url$account.names,",")
+top_url <- unnest(data = top_url,cols = account.name)
+top_url$account.name <- str_trim(top_url$account.name)
 
 
 net <- list(timestamp=E(g)$t_coord_share)
@@ -32,10 +41,6 @@ t$time <- as.Date(t$time)
 t <- t %>% dplyr::group_by(time) %>%
     dplyr::summarize(GroupCount = n())
 
-page_details <- data.frame(component=V(g)$component, name=V(g)$account.name, verified=V(g)$account.verified,degree=V(g)$degree)
-shares <- as.data.frame(data[[1]])
-
-url_shared <- unique(shares$title[shares$account.name %in% V(g)$account.name])
 
 # Define UI for application that draws a histogram
 ui <- fluidPage(theme = "bootstrap.css",
@@ -60,7 +65,7 @@ ui <- fluidPage(theme = "bootstrap.css",
                          #            multiple = F),
                          selectInput('news', 
                                      'Select News',
-                                     choices = c("All", url_shared),
+                                     choices = c("All", unique(top_url$expanded)),
                                      selected = "All",
                                      selectize=FALSE)
                          
@@ -69,9 +74,10 @@ ui <- fluidPage(theme = "bootstrap.css",
                      mainPanel(
                          
                          tabsetPanel(type = "tabs",
-                                     tabPanel( "Network",visNetworkOutput("network")),
-                                     tabPanel("Timeline", plotOutput(outputId = "barplot")),
-                                     tabPanel("Details", DT::dataTableOutput("details"))
+                                     tabPanel("Details", DT::dataTableOutput("details")),
+                                     tabPanel( "Network",visNetworkOutput("network",height = "800")),
+                                     tabPanel("Timeline", plotOutput(outputId = "barplot"))
+                                     
                          )
                          
                      )
@@ -82,13 +88,15 @@ server <- function(input, output) {
     
     
     g2 = reactive({
-        selected <- unique(shares$account.name[shares$title == input$news & shares$account.name %in% V(g)$account.name])
+        selected <- top_url$account.name[top_url$expanded == input$news]
         net2 <- subset(net, time >= as.character(input$daterange4[1]) & time <= as.character(input$daterange4[2]))
         g3 <- subgraph.edges(g,eids = net2$eid,delete.vertices = T)
         #if(input$component=="All"){induced_subgraph(graph = g3,vids = V(g3)[V(g3)$degree >= input$degree])}
         #else if(input$component!="All"){induced_subgraph(graph = g3,vids = V(g3)[V(g3)$degree >= input$degree & V(g3)$component == input$component ])}
         if(input$news == "All"){induced_subgraph(graph = g3,vids = V(g3)[V(g3)$degree >= input$degree])}
-        else if(input$news != "All"){induced_subgraph(graph = g3,vids = V(g3)$name[V(g3)$account.name %in% selected])}
+        else if(input$news != "All"){
+            V(g3)[V(g3)$account.name %in% selected]$color <- "red"
+            induced_subgraph(graph = g3,vids = V(g3)[V(g3)$degree >= input$degree])}
         
         
     })
@@ -100,24 +108,22 @@ server <- function(input, output) {
     
 
     
-
-    
-    
-    
-    
-   
-    
-    
     
     
     output$network <- renderVisNetwork({
         
-        nodes <- data.frame(id=V(g2())$name, label=V(g2())$account.name, group=V(g2())$component)
+        nodes <- data.frame(id=V(g2())$name, 
+                            label=V(g2())$account.name, 
+                            color=V(g2())$color, 
+                            component=V(g2())$component, 
+                            title=paste0("subscribers=", V(g2())$avg.account.subscriberCount, " - verified=",verified=V(g2())$account.verified))
+        
         edges <- as.data.frame(as_edgelist(g2()))
         edges$weight <- E(g2())$weight
         colnames(edges) <- c("from", "to", "width")
         
         visNetwork(nodes, edges) %>%
+            visOptions(highlightNearest = TRUE, selectedBy = "component") %>%
             visIgraphLayout()
     })
     
@@ -125,7 +131,10 @@ server <- function(input, output) {
     output$barplot <- renderPlot({ggplot(t3(),mapping = (aes(x = time,y = GroupCount)))+geom_line()+theme_light()})
     
    
-    output$details <- DT::renderDataTable({page_details})
+    output$details <- DT::renderDataTable({
+        DT::datatable(top_url_tab, options = list(lengthMenu = c(5, 30, 50), pageLength = 5))
+        #top_url_tab
+        })
     
     
 }
