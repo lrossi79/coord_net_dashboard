@@ -68,15 +68,18 @@ ui <- fluidPage(theme = "bootstrap.css",
                                      'Select News',
                                      choices = c("All", unique(top_url$expanded)),
                                      selected = "All",
-                                     selectize=FALSE)
-                         
-                         ),
+                                     selectize=FALSE),
+                         #data description
+                         tags$div(class="header", checked=NA,
+                                  tags$h6("Facebbok entities (Pages or Public Groups) that have shared, in a continuous coordinated way, news stories (in Italian) containing the keywords:  coronavirus OR covid-19 OR SARS-CoV-2. Details on the methods:"),
+                                  tags$a(href="https://github.com/fabiogiglietto/CooRnet", "CooRnet"))
+                                  ),
                      
                      mainPanel(
                          
                          tabsetPanel(type = "tabs",
-                                     tabPanel("Details", DT::dataTableOutput("details")),
                                      tabPanel( "Network",visNetworkOutput("network",height = "800")),
+                                     tabPanel("News stories", DT::dataTableOutput("details")),
                                      tabPanel("Timeline", plotOutput(outputId = "barplot"))
                                      
                          )
