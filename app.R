@@ -20,7 +20,7 @@ library(CooRnet)
 
 
 
-data <-  readRDS("data/dk_output.rds")
+data <-  readRDS("data/output.rds")
 g <- data[[1]]
 V(g)$color <- "gray"
 top_url <- data[[2]]
