@@ -1,10 +1,30 @@
 #################### CooRnet ##################### 
-estimate_coord_interval script executed on: 2020-04-19 14:18 CEST
+get_ctshares script executed on: 2020-04-23 15:06 CEST
+Original URLs: 1000 
+CT shares: 274 
+Unique URLs in CT shares: 215 
+Link in CT shares matching original URLs: 86
 
-estimate_coord_interval script executed on: 2020-04-19 14:18 CEST
-
+estimate_coord_interval script executed on: 2020-04-23 15:16 CEST
 
 q (quantile of quickest URLs to be filtered): 0.1
 p (percentage of total shares to be reached): 0.5
-coordination interval from estimate_coord_interval: 1 secs
-Warning: with the specified parameters p and q the median was 0 secs. The coordination interval has been automatically set to 1 secs
+coordination interval from estimate_coord_interval: 53 secs
+
+number of unique URLs shared in coordinated way: 5 (13.16%) 
+number of unique URLs shared in non-coordinated way: 33 (86.84%) 
+percentile_edge_weight: 0.9 (minimum coordination repetition: 1) 
+highly connected coordinated entities: 13 
+number of component: 4
+
+estimate_coord_interval script executed on: 2020-04-23 15:19 CEST
+
+q (quantile of quickest URLs to be filtered): 0.1
+p (percentage of total shares to be reached): 0.5
+coordination interval from estimate_coord_interval: 53 secs
+
+number of unique URLs shared in coordinated way: 5 (13.16%) 
+number of unique URLs shared in non-coordinated way: 33 (86.84%) 
+percentile_edge_weight: 0.9 (minimum coordination repetition: 1) 
+highly connected coordinated entities: 13 
+number of component: 4

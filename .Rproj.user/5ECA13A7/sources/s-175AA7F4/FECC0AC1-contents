@@ -19,10 +19,11 @@ library(CooRnet)
 
 
 
-data <-  readRDS("data/output.rds")
-g <- data[[2]]
+
+data <-  readRDS("data/dk_output.rds")
+g <- data[[1]]
 V(g)$color <- "gray"
-top_url <- get_top_coord_urls(data)
+top_url <- data[[2]]
 top_url_tab <- top_url
 top_url$account.name <- strsplit(top_url$account.names,",")
 top_url <- unnest(data = top_url,cols = account.name)

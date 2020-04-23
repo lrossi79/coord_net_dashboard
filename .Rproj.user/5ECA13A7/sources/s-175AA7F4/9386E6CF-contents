@@ -12,6 +12,10 @@ Sys.getenv("CT_KEY")
 
 
 
+stories <- get_story_list(rows =1000,
+                          fq = "(text:coronavirus OR text:covid-19) AND (tags_id_media:38379645) AND publish_date:[2020-03-01T00:00:00.000Z TO 2020-04-24T00:00:00.000Z]",api_key = MEDIACLOUD_API_KEY)
+
+
 stories <- get_story_list(rows = 500,
                            fq = "(text:coronavirus OR text:covid-19) AND (tags_id_media:34412372 OR tags_id_media:38380117 OR tags_id_media:162546803 OR tags_id_media:162546808 OR tags_id_media:162546809) AND publish_date:[2020-04-01T00:00:00.000Z TO 2020-04-10T00:00:00.000Z]",api_key = MEDIACLOUD_API_KEY)
 
@@ -22,7 +26,7 @@ stories <- get_story_list(rows = 200,
 
 
 ct_shares.df <- get_ctshares(stories, url_column = "url", date_column = "publish_date", sleep_time = .2, nmax = 100)
-output <- get_coord_shares(ct_shares.df =  ct_shares.df,parallel = F,percentile_edge_weight = .9,clean_urls = T)
+output <- get_coord_shares(ct_shares.df =  ct_shares.df,parallel = F,percentile_edge_weight = .2,clean_urls = T,gtimestamps = T)
 get_outputs(output)
 
 top_coord_stories <- get_top_news(output, order_by = "engagement", component=TRUE, top=10)
@@ -30,12 +34,8 @@ top_coord_stories <- get_top_news(output, order_by = "engagement", component=TRU
 plot(highly_connected_g, vertex.label=V(highly_connected_g)$account.name)
 
 
+top_urls <- get_top_coord_urls(output)
 
-plot(highly_connected_g, vertex.label=V(highly_connected_g)$account.name,
-     vertex.label.cex=.8,
-     vertex.size=7,
-     main="Bergamo & Italy  & Coronavirus March 18&19",
-     vertex.color=V(highly_connected_g)$component,
-     vertex.label.family="Helvetica",
-     vertex.label.dist=.5,
-     vertex.label.degree=pi/2)
+data <- list(output[[2]],top_urls)
+output
+
