@@ -20,7 +20,7 @@ library(CooRnet)
 
 
 
-data <-  readRDS("data/output.rds")
+data <-  readRDS("data/dashboard_data.rds")
 g <- data[[1]]
 V(g)$color <- "gray"
 top_url <- data[[2]]
@@ -59,11 +59,12 @@ ui <- fluidPage(theme = "bootstrap.css",
                                       min = 1,
                                       max = max(degree(g)),
                                       value = 0),
-                         #selectInput("component",
-                         #            "Select Component:",
-                         #            choices = c("All",unique(V(g)$component)),
-                         #            selected = "All",
-                         #            multiple = F),
+                         sliderInput("repetition",
+                                     "Repetition:",
+                                     min = 1,
+                                     max = max(E(g)$weight),
+                                     value = 0),
+                         
                          selectInput('news', 
                                      'Select News',
                                      choices = c("All", unique(top_url$expanded)),
@@ -94,7 +95,7 @@ server <- function(input, output) {
     g2 = reactive({
         selected <- top_url$account.name[top_url$expanded == input$news]
         net2 <- subset(net, time >= as.character(input$daterange4[1]) & time <= as.character(input$daterange4[2]))
-        g3 <- subgraph.edges(g,eids = net2$eid,delete.vertices = T)
+        g3 <- subgraph.edges(g,eids = E(g)[E(g) %in% net2$eid & E(g)$weight >= input$repetition],delete.vertices = T)
         #if(input$component=="All"){induced_subgraph(graph = g3,vids = V(g3)[V(g3)$degree >= input$degree])}
         #else if(input$component!="All"){induced_subgraph(graph = g3,vids = V(g3)[V(g3)$degree >= input$degree & V(g3)$component == input$component ])}
         if(input$news == "All"){induced_subgraph(graph = g3,vids = V(g3)[V(g3)$degree >= input$degree])}
@@ -124,6 +125,7 @@ server <- function(input, output) {
         
         edges <- as.data.frame(as_edgelist(g2()))
         edges$weight <- E(g2())$weight
+        edges$weight <- (edges$weight/max(edges$weight))+10
         colnames(edges) <- c("from", "to", "width")
         
         visNetwork(nodes, edges) %>%
