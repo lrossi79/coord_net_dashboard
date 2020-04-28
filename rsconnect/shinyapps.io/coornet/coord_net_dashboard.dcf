@@ -5,6 +5,6 @@ account: coornet
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 2122099
-bundleId: 3054468
+bundleId: 3068098
 url: https://coornet.shinyapps.io/coord_net_dashboard/
-when: 1587642830.23291
+when: 1587927329.85394
