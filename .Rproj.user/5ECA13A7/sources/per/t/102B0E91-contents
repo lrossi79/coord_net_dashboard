@@ -30,17 +30,19 @@ top_url <- unnest(data = top_url,cols = cooR.account.name)
 top_url$cooR.account.name <- str_trim(top_url$cooR.account.name)
 top_url$cooR.account.name <- gsub(pattern = "\"",replacement = "",x = top_url$cooR.account.name)
 
+g_c
 
-net <- list(timestamp=E(g)$t_coord_share)
-names(net) <- as.data.frame(as.character(E(g)))
-net <- melt(net,)
-net <- net[c(2,1)]
-names(net) <- c("eid","time")
-net$time <- as_datetime(net$time)
-start_t <-  min(net$time)-days(1)
-end_t <-  max(net$time)+days(1)
-min_t <- min(net$time)-days(2)
-max_t <- max(net$time)+days(2)
+# 
+# #net <- list(timestamp=E(g)$t_coord_share)
+# names(net) <- as.data.frame(as.character(E(g)))
+# net <- melt(net,)
+# net <- net[c(2,1)]
+# names(net) <- c("eid","time")
+# net$time <- as_datetime(net$time)
+# start_t <-  min(net$time)-days(1)
+# end_t <-  max(net$time)+days(1)
+# min_t <- min(net$time)-days(2)
+# max_t <- max(net$time)+days(2)
 
 
 
@@ -51,13 +53,13 @@ ui <- fluidPage(theme = "bootstrap.css",
                  sidebarLayout(
                      sidebarPanel(
                          img(src='logo-coornet.png', align = "left", width="80%"),
-                          dateRangeInput("dateRange", 
-                                         "Date Range",
-                                         start = start_t,
-                                         end = end_t,
-                                         min= min_t,
-                                         max=max_t
-                                         ),
+                          # dateRangeInput("dateRange", 
+                          #                "Date Range",
+                          #                start = start_t,
+                          #                end = end_t,
+                          #                min= min_t,
+                          #                max=max_t
+                          #                ),
                         br(),
                          selectInput('news', 
                                      'Select News',
@@ -80,7 +82,7 @@ ui <- fluidPage(theme = "bootstrap.css",
                          
                          #data description
                          tags$div(class="header", checked=NA,
-                                  tags$h6("Facebbok entities (Pages or Public Groups) that have shared, in a continuous coordinated way, news stories (in Italian) containing the keywords:  coronavirus OR covid-19 OR SARS-CoV-2. Details on the methods:"),
+                                  tags$h6(" CooRnet Dashboard"),
                                   tags$a(href="https://github.com/fabiogiglietto/CooRnet", "CooRnet"))
                                   ),
                      
@@ -88,9 +90,9 @@ ui <- fluidPage(theme = "bootstrap.css",
                          
                          tabsetPanel(type = "tabs",
                                      tabPanel( "Network",visNetworkOutput("network",height = "800")),
-                                     tabPanel("News stories", DT::dataTableOutput("details")),
+                                     tabPanel("News stories", DT::dataTableOutput("details"))
                                      #tabPanel("test", DT::dataTableOutput("test")),
-                                     tabPanel("Timeline", plotOutput("barplot"), verbatimTextOutput("dateRangeText"))
+                                     #tabPanel("Timeline", plotOutput("barplot"), verbatimTextOutput("dateRangeText"))
                                      
                                      
                          )
@@ -104,8 +106,8 @@ server <- function(input, output) {
     
     g2 = reactive({
         selected <- top_url$cooR.account.name[top_url$expanded == input$news]
-        net2 <- net %>% filter(time >= as.character(input$dateRange[1]), time < as.character(input$dateRange[2]))
-        g3 <- subgraph.edges(g,eids = E(g)[E(g) %in% net2$eid & E(g)$weight >= input$repetition ],delete.vertices = T)
+        #net2 <- net %>% filter(time >= as.character(input$dateRange[1]), time < as.character(input$dateRange[2]))
+        g3 <- subgraph.edges(g,eids = E(g)[E(g)$weight >= input$repetition ],delete.vertices = T)
         if(input$news == "All"){induced_subgraph(graph = g3,vids = V(g3)[V(g3)$degree >= input$degree])}
         else if(input$news != "All"){
             V(g3)[V(g3)$account.name %in% selected]$color <- "red"
@@ -115,13 +117,13 @@ server <- function(input, output) {
     })
     
     
-    t2= reactive({
-        t2 <- net %>% filter(time >= as.character(input$dateRange[1]), time < as.character(input$dateRange[2]))
-        #t2$time <- as.Date(t2$time)
-        t2$time_c <- ceiling_date(t2$time,unit = "hour")
-        t2 <-  t2 %>% dplyr::group_by(time_c) %>% dplyr::summarize(count = n())
-        
-    })
+    # t2= reactive({
+    #     t2 <- net %>% filter(time >= as.character(input$dateRange[1]), time < as.character(input$dateRange[2]))
+    #     #t2$time <- as.Date(t2$time)
+    #     t2$time_c <- ceiling_date(t2$time,unit = "hour")
+    #     t2 <-  t2 %>% dplyr::group_by(time_c) %>% dplyr::summarize(count = n())
+    #     
+    # })
     
 
     
@@ -134,7 +136,7 @@ server <- function(input, output) {
                             color=V(g2())$color,
                             component=V(g2())$component,
                             title=paste0(V(g2())$account.name, " - AVG. subscribers=", V(g2())$avg.account.subscriberCount, " - verified=",verified=V(g2())$account.verified),
-                            font.size=V(g2())$degree*2)
+                            font.size=V(g2())$degree/max(V(g2())$degree)+50)
 
         edges <- as.data.frame(as_edgelist(g2()))
         edges$weight <- E(g2())$weight

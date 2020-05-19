@@ -1,19 +1,19 @@
 {
     "collab_server" : "",
     "contents" : "",
-    "created" : 1586956604713.000,
+    "created" : 1588875116536.000,
     "dirty" : false,
     "encoding" : "UTF-8",
     "folds" : "",
-    "hash" : "629862665",
-    "id" : "FECC0AC1",
-    "lastKnownWriteTime" : 1588103022,
-    "last_content_update" : 1588103022135,
+    "hash" : "3559284290",
+    "id" : "102B0E91",
+    "lastKnownWriteTime" : 1589186255,
+    "last_content_update" : 1589186255286,
     "path" : "~/GitHub/coord_net_dashboard/app.R",
     "project_path" : "app.R",
     "properties" : {
-        "cursorPosition" : "91,38",
-        "scrollLine" : "56"
+        "cursorPosition" : "2,0",
+        "scrollLine" : "0"
     },
     "read_only" : false,
     "read_only_alternatives" : [

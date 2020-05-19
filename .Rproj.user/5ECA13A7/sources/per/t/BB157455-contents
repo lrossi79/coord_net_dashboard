@@ -1,4 +1,4 @@
-data_full <- readRDS("data/archive/output72756b6c5847.rds")
+data_full <- readRDS("../../../Downloads/output72756b6c5847.rds")
 top_urls <- get_top_coord_urls(data_full,top = 50)
 dashboard_data <- list(data_full[[2]],top_urls,data_full[[1]])
-saveRDS(dashboard_data,"data/dashboard_data.rds")
+saveRDS(dashboard_data,"dashboard_data.rds")
